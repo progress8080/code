@@ -1,0 +1,29 @@
+# Thesis metadata — fill in the bracketed fields before submission.
+# These values are used on the title page, declaration and document properties.
+
+title: "Implementation of a Simulation System for Predicting Keel-Block Reaction Forces and Optimizing Support Spacing During Ship Construction"
+subtitle: "Weight Distribution, Contact Algorithms, Welding Deformation and Minimax Spacing Optimisation in a Verified Python Application"
+author: "[Student Full Name]"
+student_id: "[Student ID]"
+degree: "Bachelor of Science in Computer Science and Ship Engineering"
+department: "[Department / Faculty]"
+university: "[University Name]"
+supervisor: "[Supervisor Name, Title]"
+co_supervisor: "[Co-supervisor Name, Title — delete this line if none]"
+place: "[City]"
+date: "[Month Year]"
+keywords:
+  - keel block spacing design
+  - block strength
+  - minimax optimisation
+  - sequential linear programming
+  - equidistribution
+  - sparse finite element method
+  - unilateral contact algorithms
+  - weight distribution
+  - welding deformation
+  - inverse identification
+  - software engineering
+  - Python
+  - dry docking
+  - keel block reactions

@@ -1,0 +1,199 @@
+# Ship support force case — saved by shipsupport GUI
+ship:
+  name: Example Vessel
+  lpp: 120.0
+  x_aft: 0.0
+  x_fwd: 120.0
+  weight_t: 4643.0
+  lcg: 56.639
+weights:
+- name: residual fuel
+  weight_t: 200.0
+  moment_tm: 14000.0
+  xa: 60.0
+  xb: 80.0
+- name: fresh water
+  weight_t: 60.0
+  moment_tm: 6000.0
+  xa: 94.0
+  xb: 106.0
+- name: stores
+  weight_t: 40.0
+  moment_tm: 1200.0
+weight_curve:
+  name: lightship curve
+  points:
+  - x: 0.0
+    q_t_per_m: 8.0
+  - x: 4.0
+    q_t_per_m: 16.0
+  - x: 4.0
+    q_t_per_m: 30.0
+  - x: 14.0
+    q_t_per_m: 36.0
+  - x: 16.0
+    q_t_per_m: 36.0
+  - x: 16.0
+    q_t_per_m: 64.0
+  - x: 28.0
+    q_t_per_m: 64.0
+  - x: 28.0
+    q_t_per_m: 46.0
+  - x: 38.0
+    q_t_per_m: 42.0
+  - x: 38.0
+    q_t_per_m: 34.0
+  - x: 60.0
+    q_t_per_m: 36.0
+  - x: 80.0
+    q_t_per_m: 35.0
+  - x: 100.0
+    q_t_per_m: 30.0
+  - x: 104.0
+    q_t_per_m: 28.0
+  - x: 104.0
+    q_t_per_m: 36.0
+  - x: 112.0
+    q_t_per_m: 33.0
+  - x: 118.0
+    q_t_per_m: 16.0
+  - x: 120.0
+    q_t_per_m: 0.0
+sections:
+- xa: 0.0
+  xb: 20.0
+  I_m4: 8.0
+  shear_area_m2: 0.5
+  z_deck_m3: 1.4
+  z_keel_m3: 1.8
+- xa: 20.0
+  xb: 100.0
+  I_m4: 20.0
+  shear_area_m2: 0.9
+  z_deck_m3: 3.6
+  z_keel_m3: 4.4
+- xa: 100.0
+  xb: 120.0
+  I_m4: 6.0
+  shear_area_m2: 0.4
+  z_deck_m3: 1.1
+  z_keel_m3: 1.4
+blocks:
+  types:
+    keel:
+      contact_width: 0.8
+      contact_length: 1.2
+      layers:
+      - thickness: 0.9
+        E_MPa: 30000.0
+      - thickness: 0.2
+        E_MPa: 1000.0
+      - thickness: 0.1
+        E_MPa: 400.0
+      capacity_t: 200.0
+      allowable_pressure_MPa: 2.0
+      crush_stress_MPa: 4.0
+      post_crush_ratio: 0.05
+  plan:
+    type: keel
+    start_x: 20.0
+    count: 16
+    spacing:
+    - 0.8
+    - 4.0
+    - 4.8
+    - 4.8
+    - 9.6
+    - 0.8
+    - 5.6
+    - 7.2
+    - 8.8
+    - 8.8
+    - 0.8
+    - 9.6
+    - 4.8
+    - 0.8
+    - 0.8
+    strength_t: 350.0
+structure:
+  start: 0.0
+  end: 120.0
+  spacing: 0.8
+permissible:
+  bm:
+  - x: 0.0
+    sag_tm: 3000.0
+    hog_tm: 3000.0
+  - x: 30.0
+    sag_tm: 20000.0
+    hog_tm: 20000.0
+  - x: 60.0
+    sag_tm: 25000.0
+    hog_tm: 25000.0
+  - x: 90.0
+    sag_tm: 20000.0
+    hog_tm: 20000.0
+  - x: 120.0
+    sag_tm: 3000.0
+    hog_tm: 3000.0
+  sf:
+  - x: 0.0
+    sf_t: 600.0
+  - x: 30.0
+    sf_t: 1500.0
+  - x: 90.0
+    sf_t: 1500.0
+  - x: 120.0
+    sf_t: 600.0
+settings:
+  max_element_length: 0.5
+  shear_deformation: true
+  allowable_bending_MPa: 175.0
+  allowable_shear_MPa: 110.0
+  structure_tolerance: 0.15
+  methods:
+  - rigid
+  - fem
+welding_deformation:
+  joints:
+  - x: 20.0
+    angle_mrad: 0.9
+  - x: 40.0
+    angle_mrad: 0.5
+  - x: 60.0
+    angle_mrad: 0.4
+  - x: 80.0
+    angle_mrad: 0.5
+  - x: 100.0
+    angle_mrad: 0.6
+  zones:
+  - xa: 0.0
+    xb: 20.0
+    deck_shrinkage_mm_per_m: 0.24
+    bottom_shrinkage_mm_per_m: 0.2
+    depth: 10.0
+  - xa: 20.0
+    xb: 40.0
+    deck_shrinkage_mm_per_m: 0.24
+    bottom_shrinkage_mm_per_m: 0.2
+    depth: 10.0
+  - xa: 40.0
+    xb: 60.0
+    deck_shrinkage_mm_per_m: 0.24
+    bottom_shrinkage_mm_per_m: 0.2
+    depth: 10.0
+  - xa: 60.0
+    xb: 80.0
+    deck_shrinkage_mm_per_m: 0.24
+    bottom_shrinkage_mm_per_m: 0.2
+    depth: 10.0
+  - xa: 80.0
+    xb: 100.0
+    deck_shrinkage_mm_per_m: 0.24
+    bottom_shrinkage_mm_per_m: 0.2
+    depth: 10.0
+  - xa: 100.0
+    xb: 120.0
+    deck_shrinkage_mm_per_m: 0.24
+    bottom_shrinkage_mm_per_m: 0.2
+    depth: 10.0

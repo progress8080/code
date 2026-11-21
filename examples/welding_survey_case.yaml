@@ -1,0 +1,107 @@
+# Example docking case with a SURVEYED KEEL LINE after welding.
+# Same ship and block plan as example_case.yaml. The joint angles are identified from
+# examples/welding_survey.csv (synthetic sample data).
+# ALL NUMBERS ARE ILLUSTRATIVE PLACEHOLDERS showing the input format —
+# they are not design values. Use the ship's docking plan, loading manual
+# and the yard's block data for real work.
+#
+# Units: lengths m (x measured from AP, positive forward), weights t,
+# moments t·m, stresses MPa, moduli as suffixed, gaps mm.
+#
+# Totals: 4500 t, LCG 50.47 m; 44 keel blocks of 200 t.
+
+ship:
+  name: Example Vessel
+  lpp: 120.0
+  x_aft: 0.0          # aft end of hull (may be negative if the hull extends aft of AP)
+  x_fwd: 120.0        # forward end of hull
+  weight_t: 4500.0    # declared docking weight, cross-checked against the items below
+  lcg: 50.47          # declared LCG
+
+# Each item is spread as a trapezoid over [xa, xb] preserving its weight and LCG
+# (LCG must lie in the middle third of the extent). Use `x:` for a point load.
+weights:
+  - {name: hull steel,        weight_t: 2600, lcg: 58.5,  xa: 0.0,   xb: 120.0}
+  - {name: main engine,       weight_t: 380,  lcg: 22.0,  xa: 16.0,  xb: 28.0}
+  - {name: auxiliary machinery, weight_t: 220, lcg: 26.0, xa: 14.0,  xb: 38.0}
+  - {name: superstructure,    weight_t: 420,  lcg: 14.0,  xa: 4.0,   xb: 24.0}
+  - {name: outfit,            weight_t: 520,  lcg: 62.0,  xa: 4.0,   xb: 118.0}
+  - {name: propeller & shaft, weight_t: 60,   lcg: 6.0,   xa: 0.0,   xb: 12.0}
+  - {name: rudder,            weight_t: 25,   x: 2.0}
+  - {name: anchors & chain,   weight_t: 75,   lcg: 112.0, xa: 104.0, xb: 120.0}
+  - {name: residual fuel,     weight_t: 200,  lcg: 70.0,  xa: 60.0,  xb: 80.0}
+
+# Hull girder: EI from I_m4 and E_GPa (default 206), or give EI_Nm2 directly.
+# shear_area_m2 enables Timoshenko shear deformation (G_GPa default 79.3) and τ = V / As.
+sections:
+  - {xa: 0.0,   xb: 20.0,  I_m4: 8.0,  shear_area_m2: 0.5, z_deck_m3: 1.4, z_keel_m3: 1.8}
+  - {xa: 20.0,  xb: 100.0, I_m4: 20.0, shear_area_m2: 0.9, z_deck_m3: 3.6, z_keel_m3: 4.4}
+  - {xa: 100.0, xb: 120.0, I_m4: 6.0,  shear_area_m2: 0.4, z_deck_m3: 1.1, z_keel_m3: 1.4}
+
+blocks:
+  types:
+    keel:
+      contact_width: 0.8        # m
+      contact_length: 1.2       # m
+      layers:                   # in series, E in loading direction (timber: perpendicular to grain)
+        - {thickness: 0.90, E_MPa: 30000}   # concrete
+        - {thickness: 0.20, E_MPa: 1000}    # hardwood
+        - {thickness: 0.10, E_MPa: 400}     # softwood cap
+      capacity_t: 200           # default strength of every block of this type
+      allowable_pressure_MPa: 2.0
+      crush_stress_MPa: 4.0     # optional bilinear crushing
+      post_crush_ratio: 0.05
+  plan:                         # blocks B01 … B44 (see example_case.yaml for all keys)
+    type: keel
+    start_x: 6.4                # m, first block
+    count: 44
+    spacing: 2.4                # m, distance to the next block
+
+# Floors / bulkheads / web frames that blocks should sit under.
+structure: {start: 0.0, end: 120.0, spacing: 0.8}
+
+permissible:
+  bm:
+    - {x: 0.0,   sag_tm: 3000,  hog_tm: 3000}
+    - {x: 30.0,  sag_tm: 20000, hog_tm: 20000}
+    - {x: 60.0,  sag_tm: 25000, hog_tm: 25000}
+    - {x: 90.0,  sag_tm: 20000, hog_tm: 20000}
+    - {x: 120.0, sag_tm: 3000,  hog_tm: 3000}
+  sf:
+    - {x: 0.0,   sf_t: 600}
+    - {x: 30.0,  sf_t: 1500}
+    - {x: 90.0,  sf_t: 1500}
+    - {x: 120.0, sf_t: 600}
+
+settings:
+  methods: [rigid, fem]
+  max_element_length: 0.5       # m
+  shear_deformation: true
+  allowable_bending_MPa: 175
+  allowable_shear_MPa: 110
+  structure_tolerance: 0.15     # m
+
+# ---------------------------------------------------------------------------
+# Welding deformation from a keel survey (sample data, placeholder).
+# The surveyed keel line (welding_survey.csv) is used to IDENTIFY the angular
+# distortion at the erection joints. The shrinkage curvature of the construction
+# blocks is estimated separately and subtracted from the survey before the fit.
+welding_deformation:
+  joints:                       # positions of the erection joints; angles are identified
+    - {x: 20.0}
+    - {x: 40.0}
+    - {x: 60.0}
+    - {x: 80.0}
+    - {x: 100.0}
+  zones:
+    - {xa: 0.0,   xb: 20.0,  deck_shrinkage_mm_per_m: 0.24, bottom_shrinkage_mm_per_m: 0.20, depth: 10.0}
+    - {xa: 20.0,  xb: 40.0,  deck_shrinkage_mm_per_m: 0.24, bottom_shrinkage_mm_per_m: 0.20, depth: 10.0}
+    - {xa: 40.0,  xb: 60.0,  deck_shrinkage_mm_per_m: 0.24, bottom_shrinkage_mm_per_m: 0.20, depth: 10.0}
+    - {xa: 60.0,  xb: 80.0,  deck_shrinkage_mm_per_m: 0.24, bottom_shrinkage_mm_per_m: 0.20, depth: 10.0}
+    - {xa: 80.0,  xb: 100.0, deck_shrinkage_mm_per_m: 0.24, bottom_shrinkage_mm_per_m: 0.20, depth: 10.0}
+    - {xa: 100.0, xb: 120.0, deck_shrinkage_mm_per_m: 0.24, bottom_shrinkage_mm_per_m: 0.20, depth: 10.0}
+  measured:
+    file: welding_survey.csv    # CSV with columns x_m, lift_mm (path relative to this file)
+    interpolation: pchip
+    identify_joint_angles: true
+    regularization: 0.0

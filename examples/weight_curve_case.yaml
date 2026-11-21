@@ -1,0 +1,111 @@
+# Example docking case with the LIGHTSHIP GIVEN AS A WEIGHT-DISTRIBUTION CURVE and the
+# deadweight items given with their LONGITUDINAL MOMENT about AP (moment_tm) instead of
+# the LCG. Same hull, block type and floors as example_case.yaml, with spacing design.
+# ALL NUMBERS ARE ILLUSTRATIVE PLACEHOLDERS showing the input format —
+# they are not design values. Use the ship's docking plan, loading manual
+# and the yard's block data for real work.
+#
+# Units: lengths m (x measured from AP, positive forward), weights t,
+# moments t·m, distributed weights t/m, stresses MPa, moduli as suffixed, gaps mm.
+#
+# Totals: lightship curve 4343.0 t, LCG 55.670 m (18 points, jumps at x = 4, 16, 28,
+#         38 and 104 m); deadweight items 300.0 t (moment 21200 t·m, LCG 70.667 m);
+#         docking weight 4643.0 t, LCG 56.639 m.
+
+ship:
+  name: Example Vessel (weight curve)
+  lpp: 120.0
+  x_aft: 0.0
+  x_fwd: 120.0
+  weight_t: 4643.0    # declared docking weight, cross-checked against curve + items
+  lcg: 56.639         # declared LCG
+
+# Weight-distribution curve: piecewise-linear q(x) through the points, zero outside the
+# first and last point. x must not decrease; the same x twice is a jump of q.
+# Every segment is spread as an exact trapezoid (weight and LCG are preserved).
+weight_curve:
+  name: lightship curve
+  points:
+    - {x: 0.0,   q_t_per_m: 8.0}
+    - {x: 4.0,   q_t_per_m: 16.0}
+    - {x: 4.0,   q_t_per_m: 30.0}    # jump: aft peak bulkhead, superstructure starts
+    - {x: 14.0,  q_t_per_m: 36.0}
+    - {x: 16.0,  q_t_per_m: 36.0}
+    - {x: 16.0,  q_t_per_m: 64.0}    # jump: engine room (main engine, auxiliaries)
+    - {x: 28.0,  q_t_per_m: 64.0}
+    - {x: 28.0,  q_t_per_m: 46.0}    # jump: forward end of the main engine
+    - {x: 38.0,  q_t_per_m: 42.0}
+    - {x: 38.0,  q_t_per_m: 34.0}    # jump: engine-room forward bulkhead
+    - {x: 60.0,  q_t_per_m: 36.0}
+    - {x: 80.0,  q_t_per_m: 35.0}
+    - {x: 100.0, q_t_per_m: 30.0}
+    - {x: 104.0, q_t_per_m: 28.0}
+    - {x: 104.0, q_t_per_m: 36.0}    # jump: anchors, chain locker
+    - {x: 112.0, q_t_per_m: 33.0}
+    - {x: 118.0, q_t_per_m: 16.0}
+    - {x: 120.0, q_t_per_m: 0.0}
+
+# Deadweight items with the longitudinal moment about AP instead of the LCG
+# (LCG = moment_tm / weight_t; giving lcg as well is allowed if it agrees).
+weights:
+  - {name: residual fuel, weight_t: 200, moment_tm: 14000, xa: 60.0, xb: 80.0}    # LCG 70 m
+  - {name: fresh water,   weight_t: 60,  moment_tm: 6000,  xa: 94.0, xb: 106.0}   # LCG 100 m
+  - {name: stores,        weight_t: 40,  moment_tm: 1200}                         # point load at 30 m
+
+sections:
+  - {xa: 0.0,   xb: 20.0,  I_m4: 8.0,  shear_area_m2: 0.5, z_deck_m3: 1.4, z_keel_m3: 1.8}
+  - {xa: 20.0,  xb: 100.0, I_m4: 20.0, shear_area_m2: 0.9, z_deck_m3: 3.6, z_keel_m3: 4.4}
+  - {xa: 100.0, xb: 120.0, I_m4: 6.0,  shear_area_m2: 0.4, z_deck_m3: 1.1, z_keel_m3: 1.4}
+
+blocks:
+  types:
+    keel:
+      contact_width: 0.8        # m
+      contact_length: 1.2       # m
+      layers:
+        - {thickness: 0.90, E_MPa: 30000}   # concrete
+        - {thickness: 0.20, E_MPa: 1000}    # hardwood
+        - {thickness: 0.10, E_MPa: 400}     # softwood cap
+      capacity_t: 200           # strength of every block (no strength_t in the plan)
+      allowable_pressure_MPa: 2.0
+      crush_stress_MPa: 4.0
+      post_crush_ratio: 0.05
+  plan:
+    type: keel
+    start_x: 6.4                # m, first block
+    count: 44
+    spacing: 2.4                # m
+
+structure: {start: 0.0, end: 120.0, spacing: 0.8}
+
+permissible:
+  bm:
+    - {x: 0.0,   sag_tm: 3000,  hog_tm: 3000}
+    - {x: 30.0,  sag_tm: 20000, hog_tm: 20000}
+    - {x: 60.0,  sag_tm: 25000, hog_tm: 25000}
+    - {x: 90.0,  sag_tm: 20000, hog_tm: 20000}
+    - {x: 120.0, sag_tm: 3000,  hog_tm: 3000}
+  sf:
+    - {x: 0.0,   sf_t: 600}
+    - {x: 30.0,  sf_t: 1500}
+    - {x: 90.0,  sf_t: 1500}
+    - {x: 120.0, sf_t: 600}
+
+settings:
+  methods: [rigid, fem]
+  max_element_length: 0.5       # m
+  shear_deformation: true
+  allowable_bending_MPa: 175
+  allowable_shear_MPa: 110
+  structure_tolerance: 0.15     # m
+
+spacing_design:
+  enabled: true
+  method: fem
+  target_utilisation: 1.0
+  min_spacing: 0.8              # m (the floor spacing)
+  max_spacing: 4.8              # m
+  x_min: 6.4                    # m
+  x_max: 109.6                  # m
+  snap_to_structure: true
+  max_iterations: 20

@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shipsupport"
+version = "0.1.0"
+description = "Dry-docking block reactions, block spacing design and hull girder strength analysis"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+plots = ["matplotlib>=3.7"]
+gui = ["matplotlib>=3.7", "PyQt5>=5.15"]
+dev = ["pytest>=7", "matplotlib>=3.7", "PyQt5>=5.15"]
+thesis = ["matplotlib>=3.7", "PyQt5>=5.15", "pypdfium2>=4"]
+
+[project.scripts]
+shipsupport = "shipsupport.cli:main"
+
+[project.gui-scripts]
+shipsupport-gui = "shipsupport_gui.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
